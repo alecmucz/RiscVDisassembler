@@ -39,12 +39,12 @@ typedef struct b_type_t {
 
 typedef struct u_type_t {
     uint8_t rd;
-    int32_t imm;
+    uint32_t imm;
 } u_type_t;
 
 typedef struct j_type_t {
     uint8_t rd;
-    uint32_t imm;
+    int32_t imm;
 } j_type_t;
 
 typedef struct instruction_t {
