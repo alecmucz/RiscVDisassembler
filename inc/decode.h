@@ -1,0 +1,4 @@
+#ifndef RVDISASM_DECODE_H
+#define RVDISASM_DECODE_H
+
+#endif //RVDISASM_DECODE_H
