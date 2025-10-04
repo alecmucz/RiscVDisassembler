@@ -25,4 +25,3 @@ const char* get_gpr_name(const int reg) {
         return abi_names[reg];
     return arch_names[reg];
 }
-
