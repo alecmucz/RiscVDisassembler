@@ -35,12 +35,6 @@
     X(x30, "t5")  \
     X(x31, "t6")
 
-// typedef enum {
-//     #define X(arch, abi) arch,
-//         REGISTERS
-//     #undef X
-// } gpr_t;
-
 // ABI NAMES BY DEFAULT (TRUE)
 void set_register_format(bool opt);
 const char* get_gpr_name(int reg);

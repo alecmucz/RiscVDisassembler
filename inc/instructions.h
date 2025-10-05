@@ -20,7 +20,7 @@ typedef struct i_type_t {
     uint8_t rd;
     uint8_t rs1;
     uint8_t funct3;
-    int16_t imm;
+    int32_t imm;    //12 bit immediate or 24 with Sign Extension
 } i_type_t;
 
 typedef struct s_type_t {

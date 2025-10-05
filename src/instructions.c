@@ -65,7 +65,7 @@ i_type_op_t i_type_ops[] = {
     {0b0010011,0b111,"andi"},
     {0b0010011,0b001,"slli"},
     {0b0010011,0b101,"srli"},
-    //{0b0010011,0b101,"srai"}
+    //{0b0010011,0b101,"srai"}  SRAI is handled as an SRLI edge case while decoding
 };
 
 s_type_op_t s_type_ops[] = {
