@@ -29,7 +29,9 @@ instruction_t decode_inst(uint32_t raw_inst) {
             const uint8_t rd        = (raw_inst >> 7)  & 0x1F;
             const uint8_t funct3    = (raw_inst >> 12) & 0x07;
             const uint8_t rs1       = (raw_inst >> 15) & 0x1F;
-            const uint32_t imm      = (raw_inst >> 20) & 0xFFF;
+
+            uint32_t imm      = (raw_inst >> 20) & 0xFFF;
+            if (imm & 0x800) { imm |= 0xFFFFF000; }
 
             inst.format             = I_TYPE;
             inst.fields_t.i.rd      = rd;
@@ -46,7 +48,8 @@ instruction_t decode_inst(uint32_t raw_inst) {
             const uint8_t rs2       = (raw_inst >> 20) & 0x1F;
             const uint8_t imm_11_5  = (raw_inst >> 25) & 0x7F;
 
-            const uint32_t imm      = imm_4_0 | (imm_11_5 << 5);
+            uint32_t imm            = imm_4_0 | (imm_11_5 << 5);
+            if (imm & 0x800) { imm |= 0xFFFFF000; }
 
             inst.format             = S_TYPE;
             inst.fields_t.s.rs1     = rs1;
@@ -64,8 +67,9 @@ instruction_t decode_inst(uint32_t raw_inst) {
             const uint8_t imm_10_5  = (raw_inst >> 25) & 0x3F;
             const uint8_t imm_12    = (raw_inst >> 31) & 0x01;
 
-            const uint16_t imm      = (imm_11 << 11) | (imm_4_1 << 1) |
+            uint16_t imm            = (imm_11 << 11) | (imm_4_1 << 1) |
                                       (imm_12 << 12) | (imm_10_5 << 5);
+            if (imm & 0x1000) { imm |= 0xFFFFE000; }
 
             inst.format             = B_TYPE;
             inst.fields_t.b.rs1     = rs1;
@@ -91,8 +95,9 @@ instruction_t decode_inst(uint32_t raw_inst) {
             const uint32_t imm_10_1  = (raw_inst >> 21) & 0x3FF;
             const uint32_t imm_20    = (raw_inst >> 31) & 0x01;
 
-            const uint32_t imm       = (imm_20 << 20) | (imm_10_1 << 1) |
+            uint32_t imm             = (imm_20 << 20) | (imm_10_1 << 1) |
                                        (imm_11 << 11) | (imm_19_12 << 12);
+            if (imm & 0x10000) { imm |= 0xFFE00000; }
 
             inst.format              = J_TYPE;
             inst.fields_t.j.rd       = rd;
