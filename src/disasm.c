@@ -30,7 +30,7 @@ instruction_t decode_inst(uint32_t raw_inst) {
             const uint8_t funct3    = (raw_inst >> 12) & 0x07;
             const uint8_t rs1       = (raw_inst >> 15) & 0x1F;
 
-            uint32_t imm      = (raw_inst >> 20) & 0xFFF;
+            uint32_t imm            = (raw_inst >> 20) & 0xFFF;
             if (imm & 0x800) { imm |= 0xFFFFF000; }
 
             inst.format             = I_TYPE;
@@ -69,7 +69,7 @@ instruction_t decode_inst(uint32_t raw_inst) {
 
             uint16_t imm            = (imm_11 << 11) | (imm_4_1 << 1) |
                                       (imm_12 << 12) | (imm_10_5 << 5);
-            if (imm & 0x1000) { imm |= 0xFFFFE000; }
+            if (imm & 0x1000){ imm |= 0xFFFFE000; }
 
             inst.format             = B_TYPE;
             inst.fields_t.b.rs1     = rs1;

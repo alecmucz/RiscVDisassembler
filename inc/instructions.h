@@ -60,4 +60,5 @@ typedef struct instruction_t {
     } fields_t;
 } instruction_t;
 
+const char* get_mnemonic(instruction_t inst);
 #endif //RVDISASM_INSTRUCTIONS_H

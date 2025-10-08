@@ -91,3 +91,58 @@ u_type_op_t u_type_ops[] = {
 j_type_op_t j_type_ops[] = {
     {0b1101111,"jal"}
 };
+
+const char* get_mnemonic(instruction_t inst) {
+    switch (inst.format) {
+        case R_TYPE: {
+            for (int i = 0; i < sizeof(r_type_ops) / sizeof(r_type_ops[0]); i++) {
+                if (r_type_ops[i].opcode == inst.opcode &&
+                    r_type_ops[i].funct3 == inst.fields_t.r.funct3 &&
+                    r_type_ops[i].funct7 == inst.fields_t.r.funct7) {
+                    return r_type_ops[i].mnemonic;
+                }
+            }
+            break;
+        }
+        case I_TYPE: {
+            for (int i = 0; i < sizeof(i_type_ops) / sizeof(i_type_ops[0]); i++) {
+                if (i_type_ops[i].opcode == inst.opcode &&
+                    i_type_ops[i].funct3 == inst.fields_t.i.funct3) {
+
+                    if (inst.fields_t.i.imm & 0x400) { return "srai"; }
+                    return i_type_ops[i].mnemonic;
+                    }
+            }
+            break;
+        }
+        case S_TYPE: {
+            for (int i = 0; i < sizeof(s_type_ops) / sizeof(s_type_ops[0]); i++) {
+                if (s_type_ops[i].opcode == inst.opcode &&
+                    s_type_ops[i].funct3 == inst.fields_t.s.funct3) {
+                    return s_type_ops[i].mnemonic;
+                    }
+            }
+            break;
+        }
+        case B_TYPE: {
+            for (int i = 0; i < sizeof(b_type_ops) / sizeof(b_type_ops[0]); i++) {
+                if (b_type_ops[i].opcode == inst.opcode &&
+                    b_type_ops[i].funct3 == inst.fields_t.b.funct3) {
+                    return b_type_ops[i].mnemonic;
+                    }
+            }
+        }
+        case U_TYPE: {
+            for (int i = 0; i < sizeof(u_type_ops) / sizeof(u_type_ops[0]); i++) {
+                if (u_type_ops[i].opcode == inst.opcode) {
+                    return u_type_ops[i].mnemonic;
+                    }
+            }
+            break;
+        }
+        case J_TYPE: {
+            return j_type_ops->mnemonic;
+        }
+    }
+    return "";
+}
