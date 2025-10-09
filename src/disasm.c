@@ -1,5 +1,7 @@
 #include "../inc/disasm.h"
 
+#include <time.h>
+
 instruction_t decode_inst(uint32_t raw_inst) {
     instruction_t inst = (instruction_t){0};
     const uint8_t opcode = raw_inst & 0x7F;
@@ -104,6 +106,18 @@ instruction_t decode_inst(uint32_t raw_inst) {
             inst.fields_t.j.imm      = imm;
             return inst;
         }
+        case 0x73: {
+            uint32_t imm            = (raw_inst >> 20) & 0xFFF;
+            if (imm & 0x800) { imm |= 0xFFFFF000; }
+
+            inst.format = I_TYPE;
+            inst.fields_t.i.rd      = 0x00;
+            inst.fields_t.i.funct3  = 0x00;
+            inst.fields_t.i.rs1     = 0x00;
+            inst.fields_t.i.imm     = imm;
+            return inst;
+        }
+
     }
     return (instruction_t){0};
 }

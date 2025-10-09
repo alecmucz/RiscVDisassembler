@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 #include "inc/disasm.h"
-#include "inc/instructions.h"
 
 int main(int argc, char* argv[]) {
     for (int i = 1; i < argc;i++) {
@@ -15,7 +14,7 @@ int main(int argc, char* argv[]) {
         }
         uint32_t inst;
         while (fread(&inst, sizeof(uint32_t), 1, fp) == 1) {
-            printf("%8.0x\t",inst);
+            printf("%08x\t",inst);
             print_inst(decode_inst(inst));
         }
         fclose(fp);

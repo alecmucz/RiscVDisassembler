@@ -68,7 +68,12 @@ i_type_op_t i_type_ops[] = {
     {0b0010011,0b111,"andi"},
     {0b0010011,0b001,"slli"},
     {0b0010011,0b101,"srli"},
-    //{0b0010011,0b101,"srai"}  SRAI is handled as an SRLI edge case while decoding
+    //{0b0010011,0b101,"srai"} SRAI is handled as an SRLI edge case while decoding
+    {0b0001111, 0b000, "fence"},
+    //{0b0001111, 0b000, "fence.tso"} FENCE.TSO is handled as an FENCE edge case while decoding
+    //{0b0001111, 0b000, "pause"} PAUSE is handled as an FENCE edge case while decoding
+    {0b01110011, 0b000,"ecall"}
+    //{0b01110011, 0b000,"ebreak"} EBREAK is handled as an ECALL edge case while decoding
 };
 
 s_type_op_t s_type_ops[] = {
@@ -113,6 +118,9 @@ const char* get_mnemonic(instruction_t inst) {
                     i_type_ops[i].funct3 == inst.fields_t.i.funct3) {
 
                     if (inst.fields_t.i.imm & 0x400) { return "srai"; }
+                    if (inst.fields_t.i.imm & 0x833) { return "fence.tso";}
+                    if (inst.fields_t.i.imm & 0x010) { return "pause";}
+                    if (inst.fields_t.i.imm & 0x001) { return "ebreak";}
                     return i_type_ops[i].mnemonic;
                     }
             }
@@ -160,32 +168,35 @@ void print_inst(instruction_t inst) {
         }
         case I_TYPE: {
             if (inst.opcode == 0x03) {
-                printf("%s %s, %d(%s)\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.i.rd),
+                printf("%s %s, 0x%02x(%s)\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.i.rd),
                                               inst.fields_t.i.imm, get_gpr_name(inst.fields_t.i.rs1));
             } else if (inst.opcode == 0x13) {
-                printf("%s %s, %s %d\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.i.rd),
+                printf("%s %s, %s, 0x%02x\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.i.rd),
                                               get_gpr_name(inst.fields_t.i.rs1), inst.fields_t.i.imm);
+            } else {
+                printf("%s\n", get_mnemonic(inst));
             }
             break;
         }
         case S_TYPE: {
-            printf("%s %s, %d(%s)\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.s.rs2),
+            printf("%s %s, 0x%02x(%s)\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.s.rs2),
                                           inst.fields_t.s.imm, get_gpr_name(inst.fields_t.s.rs1));
             break;
         }
         case B_TYPE: {
-            printf("%s %s, %s, %d\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.b.rs1),
+            printf("%s %s, %s, 0x%02x\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.b.rs1),
                                           get_gpr_name(inst.fields_t.b.rs2), inst.fields_t.b.imm);
             break;
         }
         case U_TYPE: {
-            printf("%s %s, %d\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.u.rd),
+            printf("%s %s, 0x%02x\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.u.rd),
                                       inst.fields_t.u.imm);
             break;
         }
         case J_TYPE: {
-            printf("%s %s, %d\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.j.rd),
+            printf("%s %s, 0x%02x\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.j.rd),
                                        inst.fields_t.j.imm);
+            break;
         }
     }
 }
