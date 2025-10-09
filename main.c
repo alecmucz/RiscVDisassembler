@@ -1,18 +1,24 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "inc/disasm.h"
 #include "inc/instructions.h"
-#include "inc/registers.h"
 
-int main(void) {
-    set_register_format(true);
+int main(int argc, char* argv[]) {
+    for (int i = 1; i < argc;i++) {
+        char* file = argv[i];
+        FILE *fp = fopen(file,"rb");
 
-    instruction_t inst = decode_inst(0x003100B3);
-
-    printf("Opcode: 0x%02x\n", inst.opcode);
-    printf("Format: %d\n", inst.format);
-    printf("rd: %s\n", get_gpr_name(inst.fields_t.r.rd));
-    printf("rs1: %s\n", get_gpr_name(inst.fields_t.r.rs1));
-    printf("rs2: %s\n", get_gpr_name(inst.fields_t.r.rs2));
+        if (fp == NULL) {
+            printf("rv32i_disasm: cannot open file");
+            continue;
+        }
+        uint32_t inst;
+        while (fread(&inst, sizeof(uint32_t), 1, fp) == 1) {
+            printf("%8.0x\t",inst);
+            print_inst(decode_inst(inst));
+        }
+        fclose(fp);
+    }
     return 0;
 }

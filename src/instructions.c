@@ -1,5 +1,8 @@
 #include "../inc/instructions.h"
 
+#include <stdio.h>
+#include "../inc/registers.h"
+
 typedef struct r_type_def_t {
     uint8_t opcode;
     uint8_t funct3;
@@ -131,6 +134,7 @@ const char* get_mnemonic(instruction_t inst) {
                     return b_type_ops[i].mnemonic;
                     }
             }
+            break;
         }
         case U_TYPE: {
             for (int i = 0; i < sizeof(u_type_ops) / sizeof(u_type_ops[0]); i++) {
@@ -144,5 +148,44 @@ const char* get_mnemonic(instruction_t inst) {
             return j_type_ops->mnemonic;
         }
     }
-    return "";
+    return "ERROR";
+}
+
+void print_inst(instruction_t inst) {
+    switch (inst.format) {
+        case R_TYPE: {
+            printf("%s %s, %s, %s\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.r.rd),
+                                          get_gpr_name(inst.fields_t.r.rs1),get_gpr_name(inst.fields_t.r.rs2));
+            break;
+        }
+        case I_TYPE: {
+            if (inst.opcode == 0x03) {
+                printf("%s %s, %d(%s)\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.i.rd),
+                                              inst.fields_t.i.imm, get_gpr_name(inst.fields_t.i.rs1));
+            } else if (inst.opcode == 0x13) {
+                printf("%s %s, %s %d\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.i.rd),
+                                              get_gpr_name(inst.fields_t.i.rs1), inst.fields_t.i.imm);
+            }
+            break;
+        }
+        case S_TYPE: {
+            printf("%s %s, %d(%s)\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.s.rs2),
+                                          inst.fields_t.s.imm, get_gpr_name(inst.fields_t.s.rs1));
+            break;
+        }
+        case B_TYPE: {
+            printf("%s %s, %s, %d\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.b.rs1),
+                                          get_gpr_name(inst.fields_t.b.rs2), inst.fields_t.b.imm);
+            break;
+        }
+        case U_TYPE: {
+            printf("%s %s, %d\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.u.rd),
+                                      inst.fields_t.u.imm);
+            break;
+        }
+        case J_TYPE: {
+            printf("%s %s, %d\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.j.rd),
+                                       inst.fields_t.j.imm);
+        }
+    }
 }
