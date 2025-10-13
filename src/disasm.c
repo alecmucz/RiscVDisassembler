@@ -1,7 +1,5 @@
 #include "../inc/disasm.h"
 
-#include <time.h>
-
 instruction_t decode_inst(uint32_t raw_inst) {
     instruction_t inst = (instruction_t){0};
     const uint8_t opcode = raw_inst & 0x7F;

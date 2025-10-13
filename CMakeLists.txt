@@ -10,6 +10,6 @@ inc/disasm.h
 
 src/disasm.c
 src/registers.c
-        src/instructions.c
+src/instructions.c
 )
 

@@ -117,12 +117,22 @@ const char* get_mnemonic(instruction_t inst) {
                 if (i_type_ops[i].opcode == inst.opcode &&
                     i_type_ops[i].funct3 == inst.fields_t.i.funct3) {
 
-                    if (inst.fields_t.i.imm & 0x400) { return "srai"; }
-                    if (inst.fields_t.i.imm & 0x833) { return "fence.tso";}
-                    if (inst.fields_t.i.imm & 0x010) { return "pause";}
-                    if (inst.fields_t.i.imm & 0x001) { return "ebreak";}
-                    return i_type_ops[i].mnemonic;
+                    if (inst.opcode == 0x13 && inst.fields_t.i.funct3 == 0x5) {
+                        if (inst.fields_t.i.imm & 0x400) {
+                            return "srai";
+                        }
+                        return "srli";
                     }
+                    if (inst.opcode == 0x73 && (inst.fields_t.i.imm & 0xFFF) == 0x1) {
+                        return "ebreak";
+                    }
+                    if (inst.opcode == 0x0F) {
+                        if ((inst.fields_t.i.imm & 0xFFF) == 0x833) return "fence.tso";
+                        if ((inst.fields_t.i.imm & 0xFFF) == 0x010) return "pause";
+                    }
+
+                    return i_type_ops[i].mnemonic;
+            }
             }
             break;
         }
@@ -168,11 +178,17 @@ void print_inst(instruction_t inst) {
         }
         case I_TYPE: {
             if (inst.opcode == 0x03) {
-                printf("%s %s, 0x%02x(%s)\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.i.rd),
+                printf("%s %s, %d(%s)\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.i.rd),
                                               inst.fields_t.i.imm, get_gpr_name(inst.fields_t.i.rs1));
             } else if (inst.opcode == 0x13) {
-                printf("%s %s, %s, 0x%02x\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.i.rd),
-                                              get_gpr_name(inst.fields_t.i.rs1), inst.fields_t.i.imm);
+                if (inst.fields_t.i.funct3 == 0x1 || inst.fields_t.i.funct3 == 0x5) {
+                    const int shamt = inst.fields_t.i.imm & 0x1F;
+                    printf("%s %s, %s, %d\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.i.rd),
+                                                  get_gpr_name(inst.fields_t.i.rs1), shamt);
+                } else {
+                    printf("%s %s, %s, %d\n", get_mnemonic(inst), get_gpr_name(inst.fields_t.i.rd),
+                                                  get_gpr_name(inst.fields_t.i.rs1), inst.fields_t.i.imm);
+                }
             } else {
                 printf("%s\n", get_mnemonic(inst));
             }

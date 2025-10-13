@@ -27,7 +27,7 @@ typedef struct s_type_t {
     uint8_t rs1;
     uint8_t rs2;
     uint8_t funct3;
-    int16_t imm;
+    int32_t imm;
 } s_type_t;
 
 typedef struct b_type_t {
